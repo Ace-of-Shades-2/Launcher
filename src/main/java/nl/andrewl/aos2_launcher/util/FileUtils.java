@@ -13,6 +13,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.Optional;
 
 public class FileUtils {
 	public static String humanReadableByteCountSI(long bytes) {
@@ -80,5 +81,12 @@ public class FileUtils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static Optional<Path> getFirstExisting(Path... paths) {
+		for (var path : paths) {
+			if (Files.exists(path)) return Optional.of(path);
+		}
+		return Optional.empty();
 	}
 }

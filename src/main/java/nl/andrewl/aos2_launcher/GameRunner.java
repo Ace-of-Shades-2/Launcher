@@ -24,7 +24,7 @@ public class GameRunner {
 								"An error occurred while ensuring that you've got the latest Java runtime: " + throwable.getMessage()
 						);
 					} else {
-						VersionFetcher.INSTANCE.ensureVersionIsDownloaded(profile.getClientVersion(), progressReporter)
+						VersionFetcher.INSTANCE.getVersionFile(profile.getClientVersion(), progressReporter)
 								.whenCompleteAsync((clientJarPath, throwable2) -> {
 									progressReporter.disableProgress();
 									if (throwable2 != null) {
@@ -60,7 +60,6 @@ public class GameRunner {
 					.inheritIO()
 					.start();
 			int result = p.waitFor();
-			System.out.println(result);
 			if (result != 0) {
 				showPopup(owner, Alert.AlertType.ERROR, "The game exited with error code: " + result);
 			}

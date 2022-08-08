@@ -29,6 +29,7 @@ public class QuickConnectDialog {
 	private final Profile profile;
 	private final ProgressReporter progressReporter;
 	private final Window owner;
+	private final Stage stage;
 
 	public QuickConnectDialog(Window owner, Profile profile, ProgressReporter progressReporter) {
 		this.profile = profile;
@@ -38,7 +39,7 @@ public class QuickConnectDialog {
 		connectButton.disableProperty().bind(fieldsValid.not());
 		hostField.textProperty().addListener((observableValue, s, t1) -> validateFields());
 		portField.textProperty().addListener((observableValue, s, t1) -> validateFields());
-		Stage stage = new Stage();
+		this.stage = new Stage();
 		stage.setScene(scene);
 		stage.initOwner(owner);
 		stage.initModality(Modality.APPLICATION_MODAL);
@@ -54,6 +55,7 @@ public class QuickConnectDialog {
 				progressReporter,
 				owner
 		);
+		stage.close();
 	}
 
 	private void validateFields() {

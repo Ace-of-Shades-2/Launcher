@@ -38,7 +38,7 @@ public class EditProfileDialog extends Dialog<Profile> {
 				.or(usernameField.textProperty().isEmpty());
 		nameField.setText(profile.getName());
 		usernameField.setText(profile.getUsername());
-		VersionFetcher.INSTANCE.getAvailableReleases()
+		VersionFetcher.INSTANCE.getAvailableClientVersions()
 				.whenComplete((releases, throwable) -> Platform.runLater(() -> {
 					if (throwable == null) {
 						if (releases.isEmpty()) {
@@ -48,10 +48,10 @@ public class EditProfileDialog extends Dialog<Profile> {
 							alert.show();
 							this.close();
 						}
-						clientVersionChoiceBox.setItems(FXCollections.observableArrayList(releases.stream().map(ClientVersionRelease::tag).toList()));
+						clientVersionChoiceBox.setItems(FXCollections.observableArrayList(releases));
 						// If the profile doesn't have a set version, use the latest release.
 						if (profile.getClientVersion() == null || profile.getClientVersion().isBlank()) {
-							String lastRelease = releases.size() == 0 ? null : releases.get(0).tag();
+							String lastRelease = releases.size() == 0 ? null : releases.get(0);
 							if (lastRelease != null) {
 								clientVersionChoiceBox.setValue(lastRelease);
 							}
