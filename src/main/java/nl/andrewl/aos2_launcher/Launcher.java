@@ -4,7 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import nl.andrewl.aos2_launcher.util.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +34,7 @@ public class Launcher extends Application {
 		addStylesheet(scene, "/styles.css");
 		stage.setScene(scene);
 		stage.setTitle("Ace of Shades - Launcher");
+		stage.getIcons().add(FileUtils.loadImage("/icon.png"));
 		stage.show();
 	}
 

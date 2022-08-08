@@ -1,5 +1,6 @@
 package nl.andrewl.aos2_launcher.util;
 
+import javafx.scene.image.Image;
 import nl.andrewl.aos2_launcher.model.ProgressReporter;
 
 import java.io.IOException;
@@ -69,6 +70,15 @@ public class FileUtils {
 				bytesRead += readCount;
 				reporter.setProgress((double) bytesRead / size);
 			}
+		}
+	}
+
+	public static Image loadImage(String resource) {
+		try (InputStream in = FileUtils.class.getResourceAsStream(resource)) {
+			if (in == null) throw new RuntimeException("Couldn't load image from resource: " + resource);
+			return new Image(in);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
