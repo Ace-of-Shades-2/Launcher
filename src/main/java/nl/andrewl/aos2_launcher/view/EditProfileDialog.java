@@ -6,7 +6,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
@@ -16,7 +15,6 @@ import nl.andrewl.aos2_launcher.model.ClientVersionRelease;
 import nl.andrewl.aos2_launcher.model.Profile;
 import nl.andrewl.aos2_launcher.util.FxUtils;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class EditProfileDialog extends Dialog<Profile> {
