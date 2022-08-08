@@ -1,30 +1,41 @@
 package nl.andrewl.aos2_launcher.view;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import nl.andrewl.aos2_launcher.model.Server;
 
-public class ServerView extends VBox {
+import java.io.IOException;
+
+public class ServerView extends Pane {
 	private final Server server;
+
+	@FXML public Label nameLabel;
+	@FXML public Label descriptionLabel;
+	@FXML public Label hostLabel;
+	@FXML public Label portLabel;
+	@FXML public Label maxPlayersLabel;
+	@FXML public Label currentPlayersLabel;
 
 	public ServerView(Server server) {
 		this.server = server;
-		var hostLabel = new Label();
-		hostLabel.textProperty().bind(server.hostProperty());
-		var portLabel = new Label();
-		portLabel.setText(Integer.toString(server.getPort()));
-		server.portProperty().addListener((observableValue, x1, x2) -> {
-			portLabel.setText(x2.toString());
-		});
-		var nameLabel = new Label();
-		nameLabel.textProperty().bind(server.nameProperty());
-		var descriptionLabel = new Label();
-		descriptionLabel.textProperty().bind(server.descriptionProperty());
-		var playersLabel = new Label();
 
-		var nodes = getChildren();
-		nodes.addAll(hostLabel, portLabel, nameLabel, descriptionLabel);
-		getStyleClass().add("list-item");
+		try {
+			FXMLLoader loader = new FXMLLoader(ServerView.class.getResource("/server_view.fxml"));
+			loader.setController(this);
+			Node node = loader.load();
+			getChildren().add(node);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		nameLabel.textProperty().bind(server.nameProperty());
+		descriptionLabel.textProperty().bind(server.descriptionProperty());
+		hostLabel.textProperty().bind(server.hostProperty());
+		portLabel.textProperty().bind(server.portProperty().asString());
+		maxPlayersLabel.textProperty().bind(server.maxPlayersProperty().asString());
+		currentPlayersLabel.textProperty().bind(server.currentPlayersProperty().asString());
 	}
 
 	public Server getServer() {
