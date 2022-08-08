@@ -43,6 +43,13 @@ public class EditProfileDialog extends Dialog<Profile> {
 		VersionFetcher.INSTANCE.getAvailableReleases()
 				.whenComplete((releases, throwable) -> Platform.runLater(() -> {
 					if (throwable == null) {
+						if (releases.isEmpty()) {
+							Alert alert = new Alert(Alert.AlertType.ERROR);
+							alert.initOwner(getOwner());
+							alert.setContentText("There are no releases available. Try again later, and if the error persists, you can file a bug report at https://github.com/Ace-of-Shades-2/Launcher/issues");
+							alert.show();
+							this.close();
+						}
 						clientVersionChoiceBox.setItems(FXCollections.observableArrayList(releases.stream().map(ClientVersionRelease::tag).toList()));
 						// If the profile doesn't have a set version, use the latest release.
 						if (profile.getClientVersion() == null || profile.getClientVersion().isBlank()) {
