@@ -52,6 +52,8 @@ jobs:
 
       - name: Add to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{needs.make_release.outputs.upload_url}}
           asset_name: ${{steps.jpackage.outputs.asset_file}}
@@ -78,7 +80,7 @@ jobs:
       - name: Run JPackage
         id: jpackage
         run: |
-          powershell.exe package_windows.ps1
+          powershell.exe -File package_windows.ps1
           cd target
           $asset = Get-ChildItem -Name -Include "*.msi"
           cd ..
@@ -88,6 +90,8 @@ jobs:
 
       - name: Add to Release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{needs.make_release.outputs.upload_url}}
           asset_name: ${{steps.jpackage.outputs.asset_file}}
