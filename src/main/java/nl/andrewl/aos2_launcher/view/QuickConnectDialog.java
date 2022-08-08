@@ -3,8 +3,6 @@ package nl.andrewl.aos2_launcher.view;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,11 +10,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import nl.andrewl.aos2_launcher.GameRunner;
+import nl.andrewl.aos2_launcher.Launcher;
 import nl.andrewl.aos2_launcher.model.Profile;
 import nl.andrewl.aos2_launcher.model.ProgressReporter;
 import nl.andrewl.aos2_launcher.model.Server;
+import nl.andrewl.aos2_launcher.util.FxUtils;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -35,23 +34,16 @@ public class QuickConnectDialog {
 		this.profile = profile;
 		this.progressReporter = progressReporter;
 		this.owner = owner;
-		try {
-			FXMLLoader loader = new FXMLLoader(QuickConnectDialog.class.getResource("/dialog/quick_connect.fxml"));
-			loader.setController(this);
-			Parent rootNode = loader.load();
-			connectButton.disableProperty().bind(fieldsValid.not());
-			hostField.textProperty().addListener((observableValue, s, t1) -> validateFields());
-			portField.textProperty().addListener((observableValue, s, t1) -> validateFields());
-			Scene scene = new Scene(rootNode);
-			Stage stage = new Stage();
-			stage.setScene(scene);
-			stage.initOwner(owner);
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("Quick Connect");
-			stage.show();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		Scene scene = FxUtils.loadScene("/dialog/quick_connect.fxml", this, Launcher.STANDARD_STYLESHEETS);
+		connectButton.disableProperty().bind(fieldsValid.not());
+		hostField.textProperty().addListener((observableValue, s, t1) -> validateFields());
+		portField.textProperty().addListener((observableValue, s, t1) -> validateFields());
+		Stage stage = new Stage();
+		stage.setScene(scene);
+		stage.initOwner(owner);
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.setTitle("Quick Connect");
+		stage.show();
 	}
 
 	@FXML

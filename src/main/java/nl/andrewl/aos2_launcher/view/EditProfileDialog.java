@@ -14,6 +14,7 @@ import javafx.stage.Window;
 import nl.andrewl.aos2_launcher.VersionFetcher;
 import nl.andrewl.aos2_launcher.model.ClientVersionRelease;
 import nl.andrewl.aos2_launcher.model.Profile;
+import nl.andrewl.aos2_launcher.util.FxUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -28,66 +29,60 @@ public class EditProfileDialog extends Dialog<Profile> {
 
 	public EditProfileDialog(Window owner, Profile profile) {
 		this.profile = new SimpleObjectProperty<>(profile);
-		try {
-			FXMLLoader loader = new FXMLLoader(EditProfileDialog.class.getResource("/dialog/edit_profile.fxml"));
-			loader.setController(this);
-			Parent parent = loader.load();
-			initOwner(owner);
-			initModality(Modality.APPLICATION_MODAL);
-			setResizable(true);
-			setTitle("Edit Profile");
+		Parent parent = FxUtils.loadNode("/dialog/edit_profile.fxml", this);
+		initOwner(owner);
+		initModality(Modality.APPLICATION_MODAL);
+		setResizable(true);
+		setTitle("Edit Profile");
 
-			BooleanBinding formInvalid = nameField.textProperty().isEmpty()
-					.or(clientVersionChoiceBox.valueProperty().isNull())
-					.or(usernameField.textProperty().isEmpty());
-			nameField.setText(profile.getName());
-			usernameField.setText(profile.getUsername());
-			VersionFetcher.INSTANCE.getAvailableReleases()
-					.whenComplete((releases, throwable) -> Platform.runLater(() -> {
-						if (throwable == null) {
-							clientVersionChoiceBox.setItems(FXCollections.observableArrayList(releases.stream().map(ClientVersionRelease::tag).toList()));
-							// If the profile doesn't have a set version, use the latest release.
-							if (profile.getClientVersion() == null || profile.getClientVersion().isBlank()) {
-								String lastRelease = releases.size() == 0 ? null : releases.get(0).tag();
-								if (lastRelease != null) {
-									clientVersionChoiceBox.setValue(lastRelease);
-								}
-							} else {
-								clientVersionChoiceBox.setValue(profile.getClientVersion());
+		BooleanBinding formInvalid = nameField.textProperty().isEmpty()
+				.or(clientVersionChoiceBox.valueProperty().isNull())
+				.or(usernameField.textProperty().isEmpty());
+		nameField.setText(profile.getName());
+		usernameField.setText(profile.getUsername());
+		VersionFetcher.INSTANCE.getAvailableReleases()
+				.whenComplete((releases, throwable) -> Platform.runLater(() -> {
+					if (throwable == null) {
+						clientVersionChoiceBox.setItems(FXCollections.observableArrayList(releases.stream().map(ClientVersionRelease::tag).toList()));
+						// If the profile doesn't have a set version, use the latest release.
+						if (profile.getClientVersion() == null || profile.getClientVersion().isBlank()) {
+							String lastRelease = releases.size() == 0 ? null : releases.get(0).tag();
+							if (lastRelease != null) {
+								clientVersionChoiceBox.setValue(lastRelease);
 							}
 						} else {
-							throwable.printStackTrace();
-							Alert alert = new Alert(Alert.AlertType.ERROR);
-							alert.initOwner(this.getOwner());
-							alert.setContentText("An error occurred while fetching the latest game releases: " + throwable.getMessage());
-							alert.show();
+							clientVersionChoiceBox.setValue(profile.getClientVersion());
 						}
-			}));
-			jvmArgsTextArea.setText(profile.getJvmArgs());
+					} else {
+						throwable.printStackTrace();
+						Alert alert = new Alert(Alert.AlertType.ERROR);
+						alert.initOwner(this.getOwner());
+						alert.setContentText("An error occurred while fetching the latest game releases: " + throwable.getMessage());
+						alert.show();
+					}
+		}));
+		jvmArgsTextArea.setText(profile.getJvmArgs());
 
-			DialogPane pane = new DialogPane();
-			pane.setContent(parent);
-			ButtonType okButton = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-			ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-			pane.getButtonTypes().add(okButton);
-			pane.getButtonTypes().add(cancelButton);
-			pane.lookupButton(okButton).disableProperty().bind(formInvalid);
-			setDialogPane(pane);
-			setResultConverter(buttonType -> {
-				if (!Objects.equals(ButtonBar.ButtonData.OK_DONE, buttonType.getButtonData())) {
-					return null;
-				}
-				var prof = this.profile.getValue();
-				prof.setName(nameField.getText().trim());
-				prof.setUsername(usernameField.getText().trim());
-				prof.setClientVersion(clientVersionChoiceBox.getValue());
-				prof.setJvmArgs(jvmArgsTextArea.getText());
-				return this.profile.getValue();
-			});
-			setOnShowing(event -> Platform.runLater(() -> nameField.requestFocus()));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		DialogPane pane = new DialogPane();
+		pane.setContent(parent);
+		ButtonType okButton = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+		pane.getButtonTypes().add(okButton);
+		pane.getButtonTypes().add(cancelButton);
+		pane.lookupButton(okButton).disableProperty().bind(formInvalid);
+		setDialogPane(pane);
+		setResultConverter(buttonType -> {
+			if (!Objects.equals(ButtonBar.ButtonData.OK_DONE, buttonType.getButtonData())) {
+				return null;
+			}
+			var prof = this.profile.getValue();
+			prof.setName(nameField.getText().trim());
+			prof.setUsername(usernameField.getText().trim());
+			prof.setClientVersion(clientVersionChoiceBox.getValue());
+			prof.setJvmArgs(jvmArgsTextArea.getText());
+			return this.profile.getValue();
+		});
+		setOnShowing(event -> Platform.runLater(() -> nameField.requestFocus()));
 	}
 
 	public EditProfileDialog(Window owner) {

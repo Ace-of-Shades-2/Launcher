@@ -1,11 +1,10 @@
 package nl.andrewl.aos2_launcher;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.andrewl.aos2_launcher.util.FileUtils;
+import nl.andrewl.aos2_launcher.util.FxUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,18 +19,14 @@ public class Launcher extends Application {
 	public static final Path PROFILES_FILE = BASE_DIR.resolve("profiles.json");
 	public static final Path PROFILES_DIR =  BASE_DIR.resolve("profiles");
 	public static final Path JRE_PATH = BASE_DIR.resolve("jre");
+	public static final String[] STANDARD_STYLESHEETS = {"/font/fonts.css", "/styles.css"};
 
 	@Override
 	public void start(Stage stage) throws IOException {
 		if (!Files.exists(BASE_DIR)) Files.createDirectory(BASE_DIR);
 		if (!Files.exists(VERSIONS_DIR)) Files.createDirectory(VERSIONS_DIR);
 		if (!Files.exists(PROFILES_DIR)) Files.createDirectory(PROFILES_DIR);
-		FXMLLoader loader = new FXMLLoader(Launcher.class.getResource("/main_view.fxml"));
-		Parent rootNode = loader.load();
-		Scene scene = new Scene(rootNode);
-		addStylesheet(scene, "/font/fonts.css");
-		addStylesheet(scene, "/styles.css");
-		stage.setScene(scene);
+		stage.setScene(FxUtils.loadScene("/main_view.fxml", STANDARD_STYLESHEETS));
 		stage.setTitle("Ace of Shades - Launcher");
 		stage.getIcons().add(FileUtils.loadImage("/icon.png"));
 		stage.show();

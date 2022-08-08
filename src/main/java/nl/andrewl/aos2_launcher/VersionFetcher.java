@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VersionFetcher {
-	private static final String BASE_GITHUB_URL = "https://api.github.com/repos/andrewlalis/ace-of-shades-2";
+	private static final String BASE_GITHUB_URL = "https://api.github.com/repos/Ace-of-Shades-2/Game";
 
 	public static final VersionFetcher INSTANCE = new VersionFetcher();
 
@@ -121,7 +121,7 @@ public class VersionFetcher {
 					if (resp.statusCode() == 200) {
 						JsonArray assetsArray = new Gson().fromJson(new InputStreamReader(resp.body()), JsonArray.class);
 						String preferredVersionSuffix = SystemVersionValidator.getPreferredVersionSuffix();
-						String regex = "aos2-client-\\d+\\.\\d+\\.\\d+-" + preferredVersionSuffix + "\\.jar";
+						String regex = "aos2-client-v\\d+\\.\\d+\\.\\d+-" + preferredVersionSuffix + "\\.jar";
 						for (var asset : assetsArray) {
 							JsonObject assetObj = asset.getAsJsonObject();
 							String name = assetObj.get("name").getAsString();
@@ -163,14 +163,14 @@ public class VersionFetcher {
 
 	private boolean isVersionFile(Path p) {
 		return Files.isRegularFile(p) && p.getFileName().toString()
-				.matches("aos2-client-\\d+\\.\\d+\\.\\d+-.+\\.jar");
+				.matches("aos2-client-v\\d+\\.\\d+\\.\\d+-.+\\.jar");
 	}
 
 	private String extractVersion(Path file) {
-		Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+		Pattern pattern = Pattern.compile("v\\d+\\.\\d+\\.\\d+");
 		Matcher matcher = pattern.matcher(file.getFileName().toString());
 		if (matcher.find()) {
-			return "v" + matcher.group();
+			return matcher.group();
 		}
 		throw new IllegalArgumentException("File doesn't contain a valid version pattern.");
 	}

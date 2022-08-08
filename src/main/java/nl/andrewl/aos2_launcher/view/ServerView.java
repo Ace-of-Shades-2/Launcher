@@ -1,13 +1,11 @@
 package nl.andrewl.aos2_launcher.view;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.andrewl.aos2_launcher.model.Server;
-
-import java.io.IOException;
+import nl.andrewl.aos2_launcher.util.FxUtils;
 
 public class ServerView extends Pane {
 	private final Server server;
@@ -21,15 +19,8 @@ public class ServerView extends Pane {
 
 	public ServerView(Server server) {
 		this.server = server;
-
-		try {
-			FXMLLoader loader = new FXMLLoader(ServerView.class.getResource("/server_view.fxml"));
-			loader.setController(this);
-			Node node = loader.load();
-			getChildren().add(node);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		Node node = FxUtils.loadNode("/server_view.fxml", this);
+		getChildren().add(node);
 		nameLabel.textProperty().bind(server.nameProperty());
 		descriptionLabel.textProperty().bind(server.descriptionProperty());
 		hostLabel.textProperty().bind(server.hostProperty());
