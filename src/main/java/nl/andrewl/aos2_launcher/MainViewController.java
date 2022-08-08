@@ -11,10 +11,7 @@ import nl.andrewl.aos2_launcher.model.Profile;
 import nl.andrewl.aos2_launcher.model.ProfileSet;
 import nl.andrewl.aos2_launcher.model.ProgressReporter;
 import nl.andrewl.aos2_launcher.model.Server;
-import nl.andrewl.aos2_launcher.view.EditProfileDialog;
-import nl.andrewl.aos2_launcher.view.ElementList;
-import nl.andrewl.aos2_launcher.view.ProfileView;
-import nl.andrewl.aos2_launcher.view.ServerView;
+import nl.andrewl.aos2_launcher.view.*;
 
 import java.util.ArrayList;
 
@@ -24,6 +21,8 @@ public class MainViewController implements ProgressReporter {
 	@FXML public Button removeProfileButton;
 	@FXML public VBox profilesVBox;
 	private ElementList<Profile, ProfileView> profilesList;
+
+	@FXML public Button quickConnectButton;
 	@FXML public VBox serversVBox;
 	private ElementList<Server, ServerView> serversList;
 
@@ -57,6 +56,7 @@ public class MainViewController implements ProgressReporter {
 		playButton.disableProperty().bind(playBind);
 		editProfileButton.disableProperty().bind(profileSet.selectedProfileProperty().isNull());
 		removeProfileButton.disableProperty().bind(profileSet.selectedProfileProperty().isNull());
+		quickConnectButton.disableProperty().bind(profileSet.selectedProfileProperty().isNull());
 
 		progressVBox.managedProperty().bind(progressVBox.visibleProperty());
 		progressVBox.setVisible(false);
@@ -136,5 +136,10 @@ public class MainViewController implements ProgressReporter {
 	@Override
 	public void setProgress(double progress) {
 		Platform.runLater(() -> progressBar.setProgress(progress));
+	}
+
+	@FXML
+	public void onQuickConnect() {
+		new QuickConnectDialog(profilesVBox.getScene().getWindow(), profileSet.getSelectedProfile(), this);
 	}
 }

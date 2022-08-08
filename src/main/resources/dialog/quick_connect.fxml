@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <padding>
+         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+      </padding>
+      <AnchorPane VBox.vgrow="NEVER">
+         <Label text="Host" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+         <TextField fx:id="hostField" prefWidth="200.0" promptText="192.168.178.1" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+      <AnchorPane>
+         <Label text="Port" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+         <TextField fx:id="portField" promptText="25565" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+      </AnchorPane>
+      <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+         <Button fx:id="connectButton" mnemonicParsing="false" onAction="#onConnect" text="Connect"
+                 HBox.hgrow="NEVER"/>
+      </HBox>
+   </VBox>
+</AnchorPane>

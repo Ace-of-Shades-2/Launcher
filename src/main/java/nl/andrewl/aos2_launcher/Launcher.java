@@ -15,7 +15,6 @@ import java.nio.file.Path;
  * The main starting point for the launcher app.
  */
 public class Launcher extends Application {
-	public static final String VERSION = "v1.0.0";
 	public static final Path BASE_DIR = Path.of(System.getProperty("user.home"), ".ace-of-shades");
 	public static final Path VERSIONS_DIR = BASE_DIR.resolve("versions");
 	public static final Path PROFILES_FILE = BASE_DIR.resolve("profiles.json");
@@ -33,7 +32,7 @@ public class Launcher extends Application {
 		addStylesheet(scene, "/font/fonts.css");
 		addStylesheet(scene, "/styles.css");
 		stage.setScene(scene);
-		stage.setTitle("Ace of Shades - Launcher " + VERSION);
+		stage.setTitle("Ace of Shades - Launcher");
 		stage.getIcons().add(FileUtils.loadImage("/icon.png"));
 		stage.show();
 	}

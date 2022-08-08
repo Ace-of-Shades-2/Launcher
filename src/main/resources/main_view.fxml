@@ -22,8 +22,9 @@
         <Tab text="Servers">
             <VBox>
                 <HBox alignment="CENTER" styleClass="button-bar" VBox.vgrow="NEVER">
+               <Button fx:id="quickConnectButton" mnemonicParsing="false" onAction="#onQuickConnect" text="Quick Connect" />
                     <Button onAction="#refreshServers" text="Refresh" />
-               <TextField fx:id="registryUrlField" prefWidth="300.0" promptText="Registry URL" text="http://localhost:8080" style="-fx-font-size: 10px;" />
+               <TextField fx:id="registryUrlField" prefWidth="300.0" promptText="Registry URL" style="-fx-font-size: 10px;" text="http://localhost:8080" />
                 </HBox>
                 <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
                     <VBox fx:id="serversVBox" styleClass="banner-list" />
