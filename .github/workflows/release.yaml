@@ -42,7 +42,6 @@ jobs:
       - name: Run JPackage
         id: jpackage
         run: |
-          ls
           ./package_linux.sh
           asset=$(find target/ -type f -name "*.deb")
           echo "Found asset: $asset"

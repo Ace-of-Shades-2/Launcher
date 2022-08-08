@@ -18,7 +18,15 @@ eligible_main_jars=("*.jar")
 main_jar=(${eligible_main_jars[0]})
 module_path=$(join_by ":" ${module_jars[@]})
 module_path="$main_jar:$module_path"
-echo "Found modules: $module_path"
+echo "Module path: $module_path"
+# TESTING CODE
+echo "/TARGET"
+ls
+echo "/LIB"
+ls lib
+echo "FULL"
+ls -a
+# END TESTING
 echo "Running jpackage..."
 jpackage \
   --name "Ace of Shades Launcher" \
