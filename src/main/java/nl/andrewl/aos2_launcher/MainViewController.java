@@ -46,9 +46,16 @@ public class MainViewController implements ProgressReporter {
 			profilesList.addAll(profileSet.getProfiles());
 			profilesList.selectElement(selected);
 		});
-		profileSet.loadOrCreateStandardFile();
-		profilesList.selectElement(profileSet.getSelectedProfile());
-		profileSet.selectedProfileProperty().bind(profilesList.selectedElementProperty());
+		profileSet.loadOrCreateStandardFile().thenRun(() -> Platform.runLater(() -> {
+			profilesList.selectElement(profileSet.getSelectedProfile());
+			profileSet.selectedProfileProperty().bind(profilesList.selectedElementProperty());
+		})).exceptionally(throwable -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.initOwner(profilesVBox.getScene().getWindow());
+			alert.setContentText("An error occurred while loading profiles: " + throwable.getMessage());
+			alert.show();
+			return null;
+		});
 
 		serversList = new ElementList<>(serversVBox, ServerView::new, ServerView.class, ServerView::getServer);
 

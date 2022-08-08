@@ -1,17 +1,21 @@
 package nl.andrewl.aos2_launcher.model;
 
 import com.google.gson.*;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.andrewl.aos2_launcher.Launcher;
+import nl.andrewl.aos2_launcher.VersionFetcher;
 import nl.andrewl.aos2_launcher.util.FileUtils;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Model for managing the set of profiles in the app.
@@ -34,13 +38,6 @@ public class ProfileSet {
 	public void addNewProfile(Profile profile) {
 		profiles.add(profile);
 		save();
-		try {
-			if (!Files.exists(profile.getDir())) {
-				Files.createDirectory(profile.getDir());
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public void removeProfile(Profile profile) {
@@ -84,6 +81,9 @@ public class ProfileSet {
 				}
 				Profile profile = new Profile(id, name, username, clientVersion, jvmArgs);
 				profiles.add(profile);
+				if (!Files.exists(profile.getDir())) {
+					Files.createDirectory(profile.getDir());
+				}
 				if (selectedProfileId != null && selectedProfileId.equals(profile.getId())) {
 					selectedProfile.set(profile);
 				}
@@ -92,21 +92,40 @@ public class ProfileSet {
 		}
 	}
 
-	public void loadOrCreateStandardFile() {
+	public CompletableFuture<Void> loadOrCreateStandardFile() {
 		if (!Files.exists(Launcher.PROFILES_FILE)) {
-			try {
-				save(Launcher.PROFILES_FILE);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			return generateStarterProfile().thenRunAsync(() -> {
+				try {
+					save(Launcher.PROFILES_FILE);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			});
 		} else {
-			try {
-				load(Launcher.PROFILES_FILE);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			return CompletableFuture.runAsync(() -> {
+				try {
+					load(Launcher.PROFILES_FILE);
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			});
 		}
 
+	}
+
+	private CompletableFuture<Void> generateStarterProfile() {
+		return VersionFetcher.INSTANCE.getAvailableReleases().thenCompose(releases -> {
+			if (releases.isEmpty()) throw new RuntimeException("Couldn't find any releases.");
+			var latestRelease = releases.get(0);
+			Profile profile = new Profile(UUID.randomUUID(), "My Profile", "Player", latestRelease.tag(), null);
+			CompletableFuture<Void> cf = new CompletableFuture<>();
+			Platform.runLater(() -> {
+				this.profiles.add(profile);
+				this.selectedProfile.set(profile);
+				cf.complete(null);
+			});
+			return cf;
+		});
 	}
 
 	public void save(Path file) throws IOException {
@@ -123,6 +142,9 @@ public class ProfileSet {
 			obj.addProperty("clientVersion", profile.getClientVersion());
 			obj.addProperty("jvmArgs", profile.getJvmArgs());
 			profilesArray.add(obj);
+			if (!Files.exists(profile.getDir())) {
+				Files.createDirectory(profile.getDir());
+			}
 		}
 		data.add("profiles", profilesArray);
 		try (var writer = Files.newBufferedWriter(file)) {
